@@ -4,21 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="Official manga and book lists under my wings.">
+        content="Official manga collection archive by Snow Parfait.">
     <meta name="theme-color"
         content="#3B6EFF">
+    <meta name="author" content="Sandaclaus">
 
 
-    <meta property="og:title"
-        content="Sandaclaus">
-    <meta property="og:description"
-        content="Official Snow Parfait manga lists">
-    <meta property="og:image"
-        content="https://mangalists.sandaclaus.com/images/Preview.png">
-    <meta property="og:url"
-        content="https://mangalists.sandaclaus.com">
-    <meta property="og:type"
-        content="website">
+    <meta property="og:title" content="Sandaclaus">
+    <meta property="og:description" content="Official Snow Parfait manga lists">
+    <meta property="og:image" content="https://mangalists.sandaclaus.com/images/Preview.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:url" content="https://mangalists.sandaclaus.com">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="Snow Parfait's Collection">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Snow Parfait's Collection">
+    <meta name="twiiter:description" content="Official manga collection archive by Snow Parfait.">
+    <meta name="twitter:image" content="https://mangalists.sandaclaus.com/images/Preview.png">
 
     <title>SNOW PARFAIT COLLECTION</title>
 
@@ -1598,62 +1601,82 @@ Thank you for stopping by, and I hope you enjoy reading!
 
 
         bookElement.addEventListener("pointerdown", (event) => {
-            if (zoomLevel <= 1 || event.button !== 0) {
-                return;
-            }
+    if (
+        zoomLevel <= 1 ||
+        event.button !== 0
+    ) {
+        return;
+    }
 
-            event.preventDefault();
+    event.preventDefault();
 
-            isPanning = true;
+    isPanning = true;
 
-            dragStartX = event.clientX;
-            dragStartY = event.clientY;
+    dragStartX = event.clientX;
+    dragStartY = event.clientY;
 
-            startingPanX = panX;
-            startingPanY = panY;
+    startingPanX = panX;
+    startingPanY = panY;
 
-            bookElement.classList.add("is-panning");
-            bookElement.setPointerCapture(event.pointerId);
-        });
+    bookElement.classList.add("is-panning");
+    bookElement.setPointerCapture(event.pointerId);
+});
 
-        bookElement.addEventListener("pointermove", (event) => {
-            if (!isPanning) {
-                return;
-            }
+bookElement.addEventListener("pointermove", (event) => {
+    if (!isPanning) {
+        return;
+    }
 
-            const movedX = event.clientX - dragStartX;
-            const movedY = event.clientY - dragStartY;
+    const movedX =
+        event.clientX - dragStartX;
 
-            panX = startingPanX + movedX;
-            panY = startingPanY + movedY;
+    const movedY =
+        event.clientY - dragStartY;
 
-            /*
-             * Prevent a page turn after dragging.
-             */
-            if (Math.abs(movedX) > 4 || Math.abs(movedY) > 4) {
-                ignoreClicksUntil = performance.now() + 200;
-            }
+    panX = startingPanX + movedX;
+    panY = startingPanY + movedY;
 
-            updateBookZoom();
-        });
+    /*
+     * Prevent a page turn after dragging.
+     */
+    if (
+        Math.abs(movedX) > 4 ||
+        Math.abs(movedY) > 4
+    ) {
+        ignoreClicksUntil =
+            performance.now() + 200;
+    }
 
-        function stopPanning(event) {
-            if (!isPanning) {
-                return;
-            }
+    updateBookZoom();
+});
 
-            isPanning = false;
-            bookElement.classList.remove("is-panning");
+function stopPanning(event) {
+    if (!isPanning) {
+        return;
+    }
 
-            if (bookElement.hasPointerCapture(event.pointerId)) {
-                bookElement.releasePointerCapture(
-                    event.pointerId
-                );
-            }
-        }
+    isPanning = false;
+    bookElement.classList.remove("is-panning");
 
-        bookElement.addEventListener("pointerup", stopPanning);
-        bookElement.addEventListener("pointercancel", stopPanning);
+    if (
+        bookElement.hasPointerCapture(event.pointerId)
+    ) {
+        bookElement.releasePointerCapture(
+            event.pointerId
+        );
+    }
+}
+
+bookElement.addEventListener(
+    "pointerup",
+    stopPanning
+);
+
+bookElement.addEventListener(
+    "pointercancel",
+    stopPanning
+);
+
 
 
         document.addEventListener("keydown", (event) => {
