@@ -14,22 +14,21 @@
     <meta property="og:description"
         content="Official Snow Parfait manga lists">
     <meta property="og:image"
-        content="https://mangalists.sandaclaus.com/images/Preview.png">
+        content="http://mangalists.sandaclaus.com/images/Preview.png">
     <meta property="og:url"
-        content="https://mangalists.sandaclaus.com">
+        content="http://mangalists.sandaclaus.com">
     <meta property="og:type"
         content="website">
 
     <title>SNOW PARFAIT COLLECTION</title>
 
-    <!-- Kanit: Regular 400 and SemiBold 600 -->
+    <!-- Outfit for headings; Montserrat for normal interface text -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" href="/images/Favicon.png">
-    <link rel="canonical"
-        href="https://mangalists.sandaclaus.com">
+    <link rel="icon" href="images/Favicon.png">
+    <link rel="canonical" href="https://mangalists.sandaclaus.com">
     <link
-        href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Outfit:wght@600&display=swap"
         rel="stylesheet"
     >
 
@@ -47,7 +46,7 @@
         body {
             margin: 0;
             min-height: 100vh;
-            font-family: "Kanit", sans-serif;
+            font-family: "Montserrat", sans-serif;
             font-weight: 400;
             color: #202020;
             background: #f3f0ea;
@@ -66,6 +65,7 @@
         h1,
         h2,
         h3 {
+            font-family: "Outfit", sans-serif;
             font-weight: 600;
         }
 
@@ -80,7 +80,7 @@
         }
 
         .portfolio-header {
-            max-width: 620px;
+            max-width: 820px;
             margin-bottom: 45px;
         }
 
@@ -102,7 +102,7 @@
         }
 
         .portfolio-description {
-            max-width: 520px;
+            max-width: 820px;
             margin: 25px 0 0;
             font-size: 1rem;
             font-weight: 400;
@@ -169,9 +169,11 @@
             background:
                 linear-gradient(
                     to top,
-                    rgba(0, 0, 0, 0.72) 0%,
-                    rgba(0, 0, 0, 0.12) 48%,
-                    transparent 75%
+                    rgba(0, 0, 0, 0.88) 0%,
+                    rgba(0, 0, 0, 0.72) 22%,
+                    rgba(0, 0, 0, 0.45) 42%,
+                    rgba(0, 0, 0, 0.28) 62%,
+                    transparent 82%
                 );
         }
 
@@ -199,6 +201,19 @@
             font-weight: 600;
             line-height: 1.05;
             letter-spacing: -0.02em;
+        }
+
+        .book-card-description {
+            max-width: 38rem;
+            margin: 9px 0 0;
+            color: rgba(255, 255, 255, 0.82);
+            font-size: clamp(0.76rem, 1.4vw, 0.92rem);
+            font-weight: 400;
+            line-height: 1.45;
+        }
+
+        .book-card-description:empty {
+            display: none;
         }
 
         .book-card-open {
@@ -253,13 +268,20 @@
 
         .flipbook-panel {
             display: grid;
-            grid-template-rows: auto minmax(0, 1fr) auto;
+
+            /*
+             * The header and footer have dedicated rows.
+             * This leaves an exact, measurable middle row for the book.
+             */
+            grid-template-rows: 82px minmax(0, 1fr) 96px;
 
             width: min(100%, 1380px);
             height: calc(100dvh - 40px);
 
-            /* Smaller internal padding also gives the pages more room. */
-            padding: 20px;
+            /*
+             * Slightly more top room while keeping the book area large.
+             */
+            padding: 12px 16px 14px;
 
             border: 1px solid rgba(255, 255, 255, 0.12);
             border-radius: 20px;
@@ -279,7 +301,13 @@
             align-items: center;
             justify-content: space-between;
             gap: 20px;
-            padding: 3px 4px 10px;
+
+            /*
+             * The heading and close button are vertically centered
+             * between the popup's top edge and the book-stage edge.
+             */
+            height: 100%;
+            padding: 0 8px;
         }
 
         .flipbook-heading {
@@ -333,11 +361,24 @@
 
         .book-stage {
             position: relative;
+
+            /*
+             * Container units let the book size itself from the actual
+             * inner reading area instead of the whole browser viewport.
+             */
+            container-type: size;
+
             display: grid;
             place-items: center;
+
+            width: 100%;
+            height: 100%;
+            min-width: 0;
             min-height: 0;
+
             overflow: hidden;
             border-radius: 14px;
+
             background:
                 radial-gradient(
                     circle at center,
@@ -369,22 +410,45 @@
          */
 
         .book {
-            --page-width: min(
-                46vw,
-                520px,
-                calc((100dvh - 150px) * 800 / 1130)
+            /*
+             * A full spread is 1600 × 1130.
+             *
+             * The spread uses whichever limit is smaller:
+             * - the stage's full available width
+             * - the stage's full available height converted to spread width
+             *
+             * This keeps the book completely inside the stage at every
+             * responsive size without cutting off its bottom.
+             */
+            --spread-width: min(
+                100cqw,
+                calc(100cqh * 1600 / 1130)
             );
 
-            --page-height: calc(var(--page-width) * 1130 / 800);
+            --page-width: calc(var(--spread-width) / 2);
+            --page-height: calc(var(--spread-width) * 1130 / 1600);
 
             position: relative;
             z-index: 2;
 
-            width: calc(var(--page-width) * 2);
+            width: var(--spread-width);
             height: var(--page-height);
 
+            max-width: 100%;
+            max-height: 100%;
+
             perspective: 2500px;
+            transition: transform 180ms ease;
             transform: none;
+            transform-origin: center;
+        }
+
+        /*
+         * Used while jumping with the page slider so many sheets do not
+         * all animate at the same time.
+         */
+        .book.is-jumping .book-page {
+            transition: none;
         }
 
         /*
@@ -416,6 +480,24 @@
 
         .book-page.is-flipped {
             transform: rotateY(180deg);
+        }
+
+        .book.is-zoomed,
+        .book.is-zoomed .book-page {
+            cursor: grab;
+        }
+
+        .book.is-panning,
+        .book.is-panning .book-page {
+            cursor: grabbing;
+        }
+
+        .book.is-panning {
+            transition: none;
+        }
+
+        .book-stage.is-zoomed .stage-navigation-area {
+            pointer-events: none;
         }
 
         .page-face {
@@ -516,16 +598,64 @@
             right: 0;
         }
 
+        /* Zoom Controls */
+
+        .zoom-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 30;
+
+            display: flex;
+            gap: 7px;
+        }
+
+        .zoom-button {
+            display: grid;
+            place-items: center;
+
+            width: 40px;
+            height: 40px;
+            padding: 0;
+
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            border-radius: 50%;
+
+            color: white;
+            background: rgba(25, 24, 22, 0.75);
+
+            font-size: 1.3rem;
+            cursor: pointer;
+
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+
+            transition:
+                background 180ms ease,
+                opacity 180ms ease;
+        }
+
+        .zoom-button:hover:not(:disabled) {
+            background: rgba(255, 255, 255, 0.18);
+        }
+
+        .zoom-button:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+        }
+
         /* ================================
            Flipbook controls
         ================================= */
 
         .flipbook-controls {
             display: grid;
-            grid-template-columns: 1fr auto 1fr;
+            grid-template-columns: 1fr minmax(180px, 420px) 1fr;
             align-items: center;
             gap: 20px;
-            padding: 10px 10px 10px;
+
+            height: 100%;
+            padding: 0 8px;
         }
 
         .control-button {
@@ -570,13 +700,36 @@
             justify-self: end;
         }
 
+        .page-jump {
+            display: grid;
+            gap: 8px;
+            width: 100%;
+            min-width: 0;
+            justify-items: center;
+        }
+
         .page-status {
             margin: 0;
             color: rgba(255, 255, 255, 0.68);
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 400;
             font-variant-numeric: tabular-nums;
             text-align: center;
+        }
+
+        .page-slider {
+            width: 100%;
+            height: 20px;
+            margin: 0;
+            accent-color: #ffffff;
+            cursor: pointer;
+            direction: rtl;
+        }
+
+        .page-slider:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.8);
+            outline-offset: 4px;
+            border-radius: 999px;
         }
 
         body.modal-open {
@@ -607,22 +760,26 @@
             }
 
             .flipbook-panel {
+                grid-template-rows: 68px minmax(0, 1fr) 88px;
+
                 width: 100%;
                 height: calc(100dvh - 20px);
-                padding: 7px;
+                padding: 7px 8px 9px;
                 border-radius: 16px;
             }
 
-            .book {
-                --page-width: min(
-                    45vw,
-                    340px,
-                    calc((100dvh - 140px) * 800 / 1130)
-                );
+            .flipbook-header,
+            .flipbook-controls {
+                padding-inline: 5px;
             }
 
             .flipbook-controls {
+                grid-template-columns: 44px minmax(0, 1fr) 44px;
                 gap: 8px;
+            }
+
+            .page-jump {
+                gap: 5px;
             }
 
             .control-button {
@@ -636,20 +793,20 @@
         }
 
         @media (max-width: 430px) {
-            .book {
-                --page-width: min(
-                    43vw,
-                    190px,
-                    calc((100dvh - 135px) * 800 / 1130)
-                );
+            .flipbook-panel {
+                grid-template-rows: 64px minmax(0, 1fr) 84px;
             }
 
-            .flipbook-header {
-                padding-bottom: 8px;
+            .flipbook-label {
+                display: none;
             }
 
-            .flipbook-controls {
-                padding-top: 8px;
+            .flipbook-title {
+                font-size: 1.05rem;
+            }
+
+            .page-status {
+                font-size: 0.72rem;
             }
         }
 
@@ -669,16 +826,18 @@
 <body>
     <main class="portfolio">
         <header class="portfolio-header">
-            <p class="portfolio-label">Selected works</p>
+            <p class="portfolio-label">Official Selected works</p>
 
             <h1 class="portfolio-title">
-                My Book<br>
-                Collection
+                Snow Parfait's<br>
+                Manga Collection
             </h1>
 
             <p class="portfolio-description">
-                A collection of stories, art books, and personal projects.
-                Select any book to open its interactive flipbook.
+                Hello! I’m Snow Parfait — welcome to my personal book collection.<br>
+What you see here is a curated selection of my works that I’ve managed to recover, archive, and translate into English for a smooth reading experience. The original pieces were handwritten in Thai (that can be a bit tricky to read).
+While I have a deep love for traditional manuscript-making, I’ve recently been exploring the digital realm.<br>In my older works, you might spot a few smudges or lower-resolution details. Those were originally drawn by hand on small A5 paper, a stark contrast to the high-resolution B5 format (350 DPI) I use digitally today.
+Thank you for stopping by, and I hope you enjoy reading!
             </p>
         </header>
 
@@ -719,6 +878,27 @@
 
             <div class="book-stage">
                 <!-- RTL: clicking the left side moves forward. -->
+                 <div class="zoom-controls" aria-label="Zoom controls">
+                    <button
+                        id="zoomOutButton"
+                        class="zoom-button"
+                        type="button"
+                        aria-label="Zoom out"
+                        disabled
+                    >
+                        −
+                    </button>
+
+                    <button
+                        id="zoomInButton"
+                        class="zoom-button"
+                        type="button"
+                        aria-label="Zoom in"
+                    >
+                        +
+                    </button>
+                </div>
+
                 <button
                     id="leftClickArea"
                     class="stage-navigation-area left"
@@ -754,10 +934,22 @@
                     <span class="control-button-text">Next</span>
                 </button>
 
-                <!-- This total/status counter is kept. -->
-                <p id="pageStatus" class="page-status">
-                    Page 1 of 1
-                </p>
+                <div class="page-jump">
+                    <p id="pageStatus" class="page-status">
+                        Page 1 of 1
+                    </p>
+
+                    <input
+                        id="pageSlider"
+                        class="page-slider"
+                        type="range"
+                        min="1"
+                        max="1"
+                        value="1"
+                        step="1"
+                        aria-label="Jump to a page"
+                    >
+                </div>
 
                 <!-- Previous is on the right for RTL reading. -->
                 <button
@@ -776,6 +968,7 @@
         const books = [
             {
                 title: "Onegai My Ghost",
+                description: "It is about mystery and of course, it has heavy lore. So I tried to compress the pacing a little bit (trying not to make it feels clamp). It's a breeze of fresh air when directing this type of genre!",
 
                 /*
                  * Replace .jpg with your real file extension
@@ -818,67 +1011,83 @@
             },
 
             {
-                title: "The Moon Garden",
-                cover: "https://placehold.co/800x800/947c9f/ffffff?text=The+Moon+Garden",
+                title: "Book Wonder",
+                description: "I have no comment about this, but I adore this the most.",
+                cover: "images/book-wonder/Thumbnail_02.png",
                 pages: [
-                    "https://placehold.co/800x1130/947c9f/ffffff?text=Cover",
-                    "https://placehold.co/800x1130/f3e9dc/403744?text=Page+2",
-                    "https://placehold.co/800x1130/d9c7dc/403744?text=Page+3",
-                    "https://placehold.co/800x1130/eadde7/403744?text=Page+4",
-                    "https://placehold.co/800x1130/c9b7ce/403744?text=Page+5",
-                    "https://placehold.co/800x1130/706079/ffffff?text=End"
+                    "images/book-wonder/Page_01.png",
+                    "images/book-wonder/Page_02.png",
+                    "images/book-wonder/Page_03.png",
+                    "images/book-wonder/Page_04.png",
+                    "images/book-wonder/Page_05.png",
+                    "images/book-wonder/Page_06.png",
+                    "images/book-wonder/Page_07.png",
+                    "images/book-wonder/Page_08.png",
+                    "images/book-wonder/Page_09.png",
+                    "images/book-wonder/Page_10.png",
+                    "images/book-wonder/Page_11.png",
+                    "images/book-wonder/Page_12.png",
+                    "images/book-wonder/Page_13.png"
                 ]
             },
 
             {
-                title: "Forest Letters",
-                cover: "https://placehold.co/800x800/567461/ffffff?text=Forest+Letters",
+                title: "Angel Night",
+                description: "This time I tried to draw story in drama genre for the first time. I love story about ghost and paranormal, so of course, this is still one of those.",
+                cover: "images/angel-night/Thumbnail_02.png",
                 pages: [
-                    "https://placehold.co/800x1130/567461/ffffff?text=Cover",
-                    "https://placehold.co/800x1130/e7eadb/34453a?text=Page+2",
-                    "https://placehold.co/800x1130/bdc9ad/34453a?text=Page+3",
-                    "https://placehold.co/800x1130/dde4cf/34453a?text=Page+4",
-                    "https://placehold.co/800x1130/a4b398/34453a?text=Page+5",
-                    "https://placehold.co/800x1130/405847/ffffff?text=End"
+                    "images/angel-night/Page_01.png",
+                    "images/angel-night/Page_02.png",
+                    "images/angel-night/Page_03.png",
+                    "images/angel-night/Page_04.png",
+                    "images/angel-night/Page_05.png",
+                    "images/angel-night/Page_06.png",
+                    "images/angel-night/Page_07.png",
+                    "images/angel-night/Page_08.png",
+                    "images/angel-night/Page_09.png",
+                    "images/angel-night/Page_10.png",
+                    "images/angel-night/Page_11.png",
+                    "images/angel-night/Page_12.png",
+                    "images/angel-night/Page_13.png",
+                    "images/angel-night/Page_14.png",
+                    "images/angel-night/Page_15.png",
+                    "images/angel-night/Page_16.png",
+                    "images/angel-night/Page_17.png",
+                    "images/angel-night/Page_18.png",
+                    "images/angel-night/Page_19.png",
+                    "images/angel-night/Page_20.png",
+                    "images/angel-night/Page_21.png",
+                    "images/angel-night/Page_22.png",
+                    "images/angel-night/Page_23.png",
+                    "images/angel-night/Page_24.png",
+                    "images/angel-night/Page_25.png",
+                    "images/angel-night/Page_26.png",
+                    "images/angel-night/Page_27.png",
+                    "images/angel-night/Page_28.png",
+                    "images/angel-night/Page_29.png",
+                    "images/angel-night/Page_30.png",
+                    "images/angel-night/Page_31.png",
+                    "images/angel-night/Page_32.png",
+                    "images/angel-night/Page_33.png",
+                    "images/angel-night/Page_34.png",
+                    "images/angel-night/Page_35.png"
                 ]
             },
 
             {
-                title: "Small Kingdom",
-                cover: "https://placehold.co/800x800/d59a68/ffffff?text=Small+Kingdom",
+                title: "Yuru Blessing",
+                description: "I drew this once I only have a pencil and papers. It gives a cozy feeling when I reading this more than the digital one, actually.",
+                cover: "images/yuru-blessing/Thumbnail_02.png",
                 pages: [
-                    "https://placehold.co/800x1130/d59a68/ffffff?text=Cover",
-                    "https://placehold.co/800x1130/f5e3ce/583c2d?text=Page+2",
-                    "https://placehold.co/800x1130/ecc9a9/583c2d?text=Page+3",
-                    "https://placehold.co/800x1130/f4d9bc/583c2d?text=Page+4",
-                    "https://placehold.co/800x1130/dcaf86/583c2d?text=Page+5",
-                    "https://placehold.co/800x1130/a96845/ffffff?text=End"
-                ]
-            },
-
-            {
-                title: "Cloud Atlas",
-                cover: "https://placehold.co/800x800/6e91aa/ffffff?text=Cloud+Atlas",
-                pages: [
-                    "https://placehold.co/800x1130/6e91aa/ffffff?text=Cover",
-                    "https://placehold.co/800x1130/e5edf0/354652?text=Page+2",
-                    "https://placehold.co/800x1130/c5d8e1/354652?text=Page+3",
-                    "https://placehold.co/800x1130/dbe8ed/354652?text=Page+4",
-                    "https://placehold.co/800x1130/a9c3d1/354652?text=Page+5",
-                    "https://placehold.co/800x1130/506f84/ffffff?text=End"
-                ]
-            },
-
-            {
-                title: "Golden Afternoon",
-                cover: "https://placehold.co/800x800/b89b45/ffffff?text=Golden+Afternoon",
-                pages: [
-                    "https://placehold.co/800x1130/b89b45/ffffff?text=Cover",
-                    "https://placehold.co/800x1130/f3ebc9/574b28?text=Page+2",
-                    "https://placehold.co/800x1130/dfcf8b/574b28?text=Page+3",
-                    "https://placehold.co/800x1130/eee2ad/574b28?text=Page+4",
-                    "https://placehold.co/800x1130/cbb866/574b28?text=Page+5",
-                    "https://placehold.co/800x1130/8c782e/ffffff?text=End"
+                    "images/yuru-blessing/Page_01.png",
+                    "images/yuru-blessing/Page_02.png",
+                    "images/yuru-blessing/Page_03.png",
+                    "images/yuru-blessing/Page_04.png",
+                    "images/yuru-blessing/Page_05.png",
+                    "images/yuru-blessing/Page_06.png",
+                    "images/yuru-blessing/Page_07.png",
+                    "images/yuru-blessing/Page_08.png",
+                    "images/yuru-blessing/Page_09.png"
                 ]
             }
         ];
@@ -888,6 +1097,7 @@
         const bookElement = document.getElementById("book");
         const flipbookTitle = document.getElementById("flipbookTitle");
         const pageStatus = document.getElementById("pageStatus");
+        const pageSlider = document.getElementById("pageSlider");
 
         const closeButton = document.getElementById("closeButton");
         const previousButton = document.getElementById("previousButton");
@@ -896,11 +1106,26 @@
         const leftClickArea = document.getElementById("leftClickArea");
         const rightClickArea = document.getElementById("rightClickArea");
 
+        const bookStage = document.querySelector(".book-stage");
+        const zoomOutButton = document.getElementById("zoomOutButton");
+        const zoomInButton = document.getElementById("zoomInButton");
+
         let currentBook = null;
         let currentSheet = 0;
         let pageElements = [];
         let lastFocusedElement = null;
         let isAnimating = false;
+        let zoomLevel = 1;
+        let panX = 0;
+        let panY = 0;
+
+        let isPanning = false;
+        let dragStartX = 0;
+        let dragStartY = 0;
+        let startingPanX = 0;
+        let startingPanY = 0;
+
+        let ignoreClicksUntil = 0;
 
         function createBookGrid() {
             bookGrid.innerHTML = "";
@@ -930,6 +1155,10 @@
                         <h2 class="book-card-title">
                             ${book.title}
                         </h2>
+
+                        <p class="book-card-description">
+                            ${book.description ?? ""}
+                        </p>
 
                         <span class="book-card-open">
                             Open book
@@ -1005,7 +1234,7 @@
                 `;
 
                 sheet.addEventListener("click", () => {
-                    if (isAnimating) {
+                    if (isAnimating || performance.now() < ignoreClicksUntil) {
                         return;
                     }
 
@@ -1050,6 +1279,7 @@
             flipbookTitle.textContent = currentBook.title;
 
             createFlipbookPages(currentBook);
+            setZoom(1);
 
             modal.classList.add("is-open");
             modal.setAttribute("aria-hidden", "false");
@@ -1214,7 +1444,61 @@
             updateControls();
         }
 
-        function updateControls() {
+        function jumpToPage(pageNumber) {
+            if (
+                !currentBook ||
+                isAnimating
+            ) {
+                return;
+            }
+
+            const totalPages = currentBook.pages.length;
+
+            const requestedPage = Math.max(
+                1,
+                Math.min(Number(pageNumber), totalPages)
+            );
+
+            /*
+             * State 0 shows page 1.
+             * State 1 shows pages 2–3.
+             * State 2 shows pages 4–5, and so on.
+             */
+            const targetSheet = Math.min(
+                pageElements.length,
+                Math.floor(requestedPage / 2)
+            );
+
+            bookElement.classList.add("is-jumping");
+
+            pageElements.forEach((page, index) => {
+                const shouldBeFlipped = index < targetSheet;
+
+                page.classList.toggle(
+                    "is-flipped",
+                    shouldBeFlipped
+                );
+
+                page.style.zIndex = shouldBeFlipped
+                    ? String(index + 1)
+                    : String(pageElements.length - index);
+            });
+
+            currentSheet = targetSheet;
+            updateControls(requestedPage);
+
+            /*
+             * Force the instant jump layout to render before restoring
+             * normal page-turn transitions.
+             */
+            void bookElement.offsetWidth;
+
+            requestAnimationFrame(() => {
+                bookElement.classList.remove("is-jumping");
+            });
+        }
+
+        function updateControls(selectedPage = null) {
             previousButton.disabled = currentSheet === 0;
 
             nextButton.disabled =
@@ -1222,21 +1506,57 @@
 
             const totalPages = currentBook?.pages.length ?? 0;
 
-            let displayedPage;
+            let displayedPage = selectedPage;
 
-            if (currentSheet === 0) {
-                displayedPage = 1;
-            } else if (currentSheet >= pageElements.length) {
-                displayedPage = totalPages;
-            } else {
-                displayedPage = Math.min(
-                    currentSheet * 2,
-                    totalPages
-                );
+            if (displayedPage === null) {
+                if (currentSheet === 0) {
+                    displayedPage = 1;
+                } else if (currentSheet >= pageElements.length) {
+                    displayedPage = totalPages;
+                } else {
+                    displayedPage = Math.min(
+                        currentSheet * 2,
+                        totalPages
+                    );
+                }
             }
+
+            displayedPage = Math.max(
+                1,
+                Math.min(displayedPage || 1, totalPages || 1)
+            );
 
             pageStatus.textContent =
                 `Page ${displayedPage} of ${totalPages}`;
+
+            pageSlider.max = String(Math.max(totalPages, 1));
+            pageSlider.value = String(displayedPage);
+            pageSlider.disabled = totalPages <= 1;
+        }
+
+        function updateBookZoom() {
+            bookElement.style.transform = `translate3d(${panX}px, ${panY}px, 0) scale(${zoomLevel})`;
+            const isZoomed = zoomLevel > 1;
+
+            bookElement.classList.toggle("is-zoomed", isZoomed);
+            bookStage.classList.toggle("is-zoomed", isZoomed);
+
+            zoomOutButton.disabled = zoomLevel <= 1;
+            zoomInButton.disabled = zoomLevel >= 3;
+        }
+
+        function setZoom(newZoom) {
+            zoomLevel = Math.min(3, Math.max(1, newZoom));
+
+            /*
+            * Return the spread to the centre when fully zoomed out.
+            */
+            if (zoomLevel === 1) {
+                panX = 0;
+                panY = 0;
+            }
+
+            updateBookZoom();
         }
 
         /*
@@ -1249,6 +1569,10 @@
         nextButton.addEventListener("click", nextPage);
         previousButton.addEventListener("click", previousPage);
 
+        pageSlider.addEventListener("input", (event) => {
+            jumpToPage(event.target.value);
+        });
+
         leftClickArea.addEventListener("click", nextPage);
         rightClickArea.addEventListener("click", previousPage);
 
@@ -1259,6 +1583,76 @@
                 closeBook();
             }
         });
+
+        zoomInButton.addEventListener("click", () => {
+            setZoom(zoomLevel + 0.25);
+        });
+
+        zoomOutButton.addEventListener("click", () => {
+            setZoom(zoomLevel - 0.25);
+        });
+
+
+
+
+        bookElement.addEventListener("pointerdown", (event) => {
+            if (zoomLevel <= 1 || event.button !== 0) {
+                return;
+            }
+
+            event.preventDefault();
+
+            isPanning = true;
+
+            dragStartX = event.clientX;
+            dragStartY = event.clientY;
+
+            startingPanX = panX;
+            startingPanY = panY;
+
+            bookElement.classList.add("is-panning");
+            bookElement.setPointerCapture(event.pointerId);
+        });
+
+        bookElement.addEventListener("pointermove", (event) => {
+            if (!isPanning) {
+                return;
+            }
+
+            const movedX = event.clientX - dragStartX;
+            const movedY = event.clientY - dragStartY;
+
+            panX = startingPanX + movedX;
+            panY = startingPanY + movedY;
+
+            /*
+             * Prevent a page turn after dragging.
+             */
+            if (Math.abs(movedX) > 4 || Math.abs(movedY) > 4) {
+                ignoreClicksUntil = performance.now() + 200;
+            }
+
+            updateBookZoom();
+        });
+
+        function stopPanning(event) {
+            if (!isPanning) {
+                return;
+            }
+
+            isPanning = false;
+            bookElement.classList.remove("is-panning");
+
+            if (bookElement.hasPointerCapture(event.pointerId)) {
+                bookElement.releasePointerCapture(
+                    event.pointerId
+                );
+            }
+        }
+
+        bookElement.addEventListener("pointerup", stopPanning);
+        bookElement.addEventListener("pointercancel", stopPanning);
+
 
         document.addEventListener("keydown", (event) => {
             if (!modal.classList.contains("is-open")) {
